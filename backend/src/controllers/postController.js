@@ -48,6 +48,24 @@ exports.getBySlug = async (req, res) => {
   }
 };
 
+exports.getById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const post = await prisma.post.findUnique({
+      where: { id },
+      include: {
+        collaborators: { include: { user: { select: { id: true, name: true, email: true } } } },
+        versions: true,
+      },
+    });
+    if (!post) return res.status(404).json({ message: 'Not found' });
+    res.json(post);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;

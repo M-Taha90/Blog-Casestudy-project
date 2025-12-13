@@ -11,7 +11,9 @@ app.use(express.json());
 
 
 app.use('/api/auth', authRoutes);
-app.use('/api/posts', require('./src/routers/posts'));
+app.use('/api/posts', require('./src/routers/postRoutes'));
+app.use('/api/uploads', require('./src/routers/uploadRoutes'));
+app.use('/api/invites', require('./src/routers/inviteRoutes'));
 
 app.get('/', (req, res) => res.json({ ok: true }));
 
