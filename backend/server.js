@@ -14,7 +14,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/posts', require('./src/routers/postRoutes'));
 app.use('/api/uploads', require('./src/routers/uploadRoutes'));
 app.use('/api/invites', require('./src/routers/inviteRoutes'));
-
+app.use('/api/ai', require('./src/routers/aiRoutes'));
 app.get('/', (req, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 5000;

@@ -2,9 +2,9 @@
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useEffect } from 'react';
+import { useEffect, useImperativeHandle, forwardRef } from 'react';
 
-export default function Editor({ content, onUpdate }) {
+const Editor = forwardRef(({ content, onUpdate }, ref) => {
   const editor = useEditor({
     extensions: [StarterKit],
     content: content || '',
@@ -14,6 +14,19 @@ export default function Editor({ content, onUpdate }) {
       }
     },
   });
+
+  // Expose editor instance to parent via ref
+  useImperativeHandle(ref, () => ({
+    setContent: (newContent) => {
+      if (editor) {
+        editor.commands.setContent(newContent);
+      }
+    },
+    getContent: () => {
+      return editor ? editor.getJSON() : null;
+    },
+    editor: editor
+  }), [editor]);
 
   // Update editor content when prop changes
   useEffect(() => {
@@ -31,4 +44,8 @@ export default function Editor({ content, onUpdate }) {
   }
 
   return <EditorContent editor={editor} className="prose max-w-none" />;
-}
+});
+
+Editor.displayName = 'Editor';
+
+export default Editor;
