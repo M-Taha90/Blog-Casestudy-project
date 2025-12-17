@@ -3,8 +3,15 @@ const auth = require('../middleware/authMiddleware');
 const ctrl = require('../controllers/postController');
 const { canEditPost, onlyOwner } = require('../middleware/postPermissionMiddleware');
 const prisma = require('../lib/prisma');
+const { getIO } = require('../socket');
 
 router.post('/', auth, ctrl.create);
+
+// Database test endpoint (temporary - for debugging)
+router.get('/test/db', ctrl.testDatabase);
+
+// Get all posts
+router.get('/', ctrl.getAll);
 
 // MUST be before /:slug
 router.get('/id/:id', ctrl.getById);
@@ -35,6 +42,14 @@ router.put('/:id', auth, canEditPost, async (req, res) => {
       });
     }
 
+    // Emit Socket.IO event for real-time update
+    try {
+      const io = getIO();
+      io.emit('posts:update');
+    } catch (err) {
+      console.error('Socket.IO error:', err);
+    }
+
     res.json({ ok: true, post });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -50,6 +65,14 @@ router.post('/:id/publish', auth, onlyOwner, async (req, res) => {
       where: { id: req.params.id },
       data: { status: 'PUBLISHED' },
     });
+
+    // Emit Socket.IO event for real-time update
+    try {
+      const io = getIO();
+      io.emit('posts:update');
+    } catch (err) {
+      console.error('Socket.IO error:', err);
+    }
 
     res.json({ ok: true, message: 'Post published', post });
   } catch (err) {

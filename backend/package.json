@@ -13,7 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@hocuspocus/extension-sqlite": "^3.4.1",
     "@hocuspocus/server": "^3.4.1",
+    "@hocuspocus/transformer": "^3.4.3",
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.1.0",
     "bcryptjs": "^3.0.3",

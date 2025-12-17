@@ -1,16 +1,26 @@
 const { Server } = require("@hocuspocus/server");
+const prisma = require("./lib/prisma");
 
-// In Hocuspocus v3, use 'new Server()' instead of 'Server.configure()'
 const server = new Server({
   port: 1234,
   timeout: 30000,
-  // Optional: Add authentication
-  // async onAuthenticate(data) {
-  //   // Verify JWT token or other auth logic
-  //   return { user: { id: data.token } };
-  // },
+
+  async onAuthenticate({ token, documentName }) {
+
+    return {
+      user: {
+        id: token || 'anonymous',
+      },
+    };
+  },
+
+  async onLoadDocument({ documentName, document }) {
+  },
+
+  async onStoreDocument({ documentName, document }) {
+  },
 });
 
 server.listen().then(() => {
-  console.log("Hocuspocus collaboration server running on port 1234");
+  console.log("Hocuspocus collaboration server running on ws://localhost:1234");
 });

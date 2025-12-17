@@ -3,6 +3,7 @@ const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const prisma = require('../lib/prisma');
 const crypto = require('crypto');
+const { getIO } = require('../socket');
 
 /* ---------------- CREATE INVITE ---------------- */
 router.post('/', authMiddleware, async (req, res) => {
@@ -93,6 +94,14 @@ router.post('/accept/:token', authMiddleware, async (req, res) => {
           role: 'EDITOR',
         },
       });
+
+      // Emit Socket.IO event for real-time update
+      try {
+        const io = getIO();
+        io.emit('posts:update');
+      } catch (err) {
+        console.error('Socket.IO error:', err);
+      }
     }
 
     // Mark invite as used
